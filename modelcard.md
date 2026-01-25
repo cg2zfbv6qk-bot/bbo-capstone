@@ -1,39 +1,47 @@
-# Datasheet for the BBO Capstone Dataset
+# Model Card: Bayesian Optimisation with Gaussian Processes
 
-## Motivation
+## Model Overview
 
-The dataset was created to support a black-box optimisation task under a limited evaluation budget. The goal was not to train a predictive model for deployment, but to study decision-making under uncertainty using Bayesian optimisation techniques.
-
-## Composition
-
-The dataset consists of sequential input–output pairs:
-- Inputs are continuous-valued vectors in the range [0, 1].
-- Outputs are scalar function evaluations returned by black-box systems.
-
-Each function has its own dataset, accumulated incrementally over multiple optimisation rounds.
-
-## Collection Process
-
-Data was generated through weekly interaction with the Imperial College BBO platform. At each iteration, a new input was proposed by the optimisation algorithm and evaluated externally. The returned output was then appended to the existing dataset.
-
-## Preprocessing
-
-No extensive preprocessing was applied. Inputs are used in their raw [0, 1] scale, and outputs are stored as returned by the black-box functions. This preserves transparency and avoids introducing additional assumptions.
+This project uses a Bayesian Optimisation framework built around a Gaussian Process (GP) surrogate model and an Upper Confidence Bound (UCB) acquisition function.
 
 ## Intended Use
 
-The dataset is intended solely for:
-- Studying sequential decision-making in black-box optimisation.
-- Demonstrating Bayesian optimisation workflows.
+The model is intended for black-box optimisation problems where:
+- Function evaluations are expensive or limited.
+- The objective function is unknown.
+- Decisions must be made sequentially under uncertainty.
 
-It is not intended for supervised learning benchmarks or general-purpose prediction tasks.
+## Model Details
+
+- Surrogate Model: Gaussian Process Regression
+- Kernel: Matérn 5/2
+- Acquisition Function: Upper Confidence Bound (UCB)
+
+The GP provides both mean predictions and uncertainty estimates, which are used by the acquisition function to guide query selection.
+
+## Training Data
+
+The model is trained iteratively on sequentially collected input–output pairs. The dataset grows over time as new evaluations are appended.
+
+## Performance Characteristics
+
+Performance is assessed qualitatively through:
+- Stability of suggested inputs over iterations.
+- Trends in best-so-far observed outputs.
+- Reduction of unnecessary exploration as uncertainty decreases.
+
+Due to the limited dataset size, quantitative performance metrics are not emphasised.
 
 ## Limitations
 
-- The dataset is small due to strict query budget constraints.
-- Outputs may be noisy or exhibit limited variation.
-- There is no guarantee that the observed data covers the global optimum of any function.
+- The model does not guarantee convergence to a global optimum.
+- Results depend heavily on the available query budget.
+- Some functions may exhibit flat or noisy landscapes that limit observable improvement.
+
+## Risks and Mitigations
+
+Aggressive exploitation may lead to premature convergence. This risk is mitigated by using uncertainty-aware acquisition and maintaining exploratory behaviour when confidence is low.
 
 ## Ethical Considerations
 
-The dataset contains no personal, sensitive, or identifiable information.
+The model operates on synthetic black-box functions and poses no ethical or societal risks.
