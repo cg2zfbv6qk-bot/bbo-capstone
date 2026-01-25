@@ -1,12 +1,39 @@
+# Datasheet for the BBO Capstone Dataset
 
-This optimisation approach uses a Gaussian Process (GP) surrogate model combined with an Upper Confidence Bound (UCB) acquisition function. The model was implemented in Python using scikit-learn and applied over ten sequential optimisation rounds across eight black-box benchmark functions.
+## Motivation
 
-Use The approach is intended for low-data, expensive black-box optimisation problems where uncertainty-aware decision-making is critical. It is suitable for smooth or moderately noisy objective functions with continuous input spaces. The method should not be used for highly discontinuous functions, large-scale optimisation problems, or settings requiring real-time decisions under strict latency constraints.
+The dataset was created to support a black-box optimisation task under a limited evaluation budget. The goal was not to train a predictive model for deployment, but to study decision-making under uncertainty using Bayesian optimisation techniques.
 
-During early rounds, the strategy prioritised exploration using space-filling sampling to establish an initial surrogate model. As more observations became available, the Gaussian Process provided calibrated uncertainty estimates, allowing the UCB acquisition function to balance exploitation of high-performing regions with exploration of uncertain areas. Over successive rounds, the strategy increasingly focused on refining promising regions while maintaining sufficient exploration to avoid premature convergence.
+## Composition
 
-Performance was evaluated qualitatively by tracking the best observed function values across rounds for each of the eight benchmark functions. Quantitative metrics included cumulative regret trends and improvement over initial baseline values. Due to the small query budget, results emphasise optimisation efficiency rather than asymptotic convergence.
+The dataset consists of sequential input–output pairs:
+- Inputs are continuous-valued vectors in the range [0, 1].
+- Outputs are scalar function evaluations returned by black-box systems.
 
-The approach assumes that the underlying objective functions are continuous and reasonably smooth, allowing them to be approximated by a Gaussian Process with a Matérn kernel. The primary limitation is scalability, as GP inference becomes computationally expensive as the dataset grows. Additionally, the optimisation outcome is sensitive to kernel choice and acquisition hyperparameters, which may affect performance across different function classes.
+Each function has its own dataset, accumulated incrementally over multiple optimisation rounds.
 
-The decision-making process is transparent and reproducible, as all model components and acquisition rules are explicitly defined. This transparency supports interpretability, reproducibility, and adaptation to real-world optimisation tasks. The approach avoids opaque heuristics, enabling users to understand and audit why specific query points are selected.
+## Collection Process
+
+Data was generated through weekly interaction with the Imperial College BBO platform. At each iteration, a new input was proposed by the optimisation algorithm and evaluated externally. The returned output was then appended to the existing dataset.
+
+## Preprocessing
+
+No extensive preprocessing was applied. Inputs are used in their raw [0, 1] scale, and outputs are stored as returned by the black-box functions. This preserves transparency and avoids introducing additional assumptions.
+
+## Intended Use
+
+The dataset is intended solely for:
+- Studying sequential decision-making in black-box optimisation.
+- Demonstrating Bayesian optimisation workflows.
+
+It is not intended for supervised learning benchmarks or general-purpose prediction tasks.
+
+## Limitations
+
+- The dataset is small due to strict query budget constraints.
+- Outputs may be noisy or exhibit limited variation.
+- There is no guarantee that the observed data covers the global optimum of any function.
+
+## Ethical Considerations
+
+The dataset contains no personal, sensitive, or identifiable information.
